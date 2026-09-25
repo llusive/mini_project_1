@@ -52,15 +52,18 @@
         document.querySelector("#card-list").replaceChildren("");
       }
 
-      let promises = [];
+      let prevPromise;
       const filterByName = document.getElementById("search");
       filterByName.addEventListener("input", () => {
         // getCards(filterByName.value).then((result) => result.data.forEach((card) => addCard(card)));
-
-        Promise.reject(promises[0]).then(promises = []);
-        promises.push(getCards(filterByName.value));
-        Promise.resolve(promises[0])
+        
+        Promise.reject(prevPromise).catch((rejected) => {
+            console.log("Old promise rejected", rejected);
+          });
+        const currPromise = getCards(filterByName.value);
+        Promise.resolve(currPromise)
           .then((result) => {
+            prevPromise = currPromise;
             removeCards();
             result.data.forEach((card) => {
               addCard(card);
