@@ -4,8 +4,6 @@
     <div class="card col-8" style="width: 18rem">
       <div class="card-body">
         <img class="img-fluid" alt="Card image" />
-        <!-- <h5 class="card-name">Card name</h5>
-        <p class="card-description">Card description</p> -->
       </div>
     </div>
   </template>
@@ -20,12 +18,27 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </head>
   <body>
-    <div id="card-info" class="row"></div>
-    <div id="main-deck" class="row"></div>
-    <div id="extra-deck" class="row"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <h1>Card Information</h1>
+          <div id="card-image"></div>
+          <div id="card-name"></div>
+          <div id="card-desc"></div>
+        </div>
+        <div class="col">
+          <h1>Main Deck</h1>
+          <div id="main-deck"></div>
+          <h1>Extra Deck</h1>
+          <div id="extra-deck"></div>
+        </div>
+        <div class="col">
+          <input type="text" id="search" />
+          <div id="card-list" class="row"></div>
+        </div>
+      </div>
+    </div>
 
-    <input type="text" id="search" />
-    <div id="card-list" class="row"></div>
     <script type="module">
       const cards = [
         ...(
@@ -48,14 +61,14 @@
         template.querySelector("img").setAttribute("id", card.name);
 
         // On hover, display card info
-        if (section != "card-info") {
+        if (section != "card-image") {
           template
             .querySelector("img")
             .addEventListener("mouseover", (event) => {
-              removeCards("card-info");
+              removeCards("card-image");
               addCard(
                 cards.find((card) => card.name == event.target.id),
-                "card-info",
+                "card-image",
               );
             });
         }
