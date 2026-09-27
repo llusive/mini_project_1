@@ -25,21 +25,13 @@
     <input type="text" id="search" />
     <div id="card-list" class="row"></div>
     <script type="module">
-      const result = await fetch(
-        "https://db.ygoprodeck.com/api/v7/cardinfo.php",
-      ).then((response) => response.json());
-
-      const cards = [...result.data]
-
-      function getCards(parameters) {
-        return new Promise((resolve) => {
-          resolve(
-            fetch(
-              `https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=${parameters}`,
-            ).then((response) => response.json()),
-          );
-        });
-      }
+      const cards = [
+        ...(
+          await fetch("https://db.ygoprodeck.com/api/v7/cardinfo.php").then(
+            (response) => response.json(),
+          )
+        ).data,
+      ];
 
       let deckCards = new Map();
       let filteredCards = [];
@@ -66,7 +58,7 @@
           }
         });
 
-        if (identifier == "deck-list") {
+        if (identifier == "deck-list") { // bugged when removing card, more cards removed than intended
           template.querySelector("img").addEventListener("click", (event) => {
             selectedCard = filteredCards[event.target.id];
 
@@ -84,20 +76,20 @@
             // re-add the saved deck-list
             const cardLookup = [];
             deckCards.entries().forEach((card) => {
-              cardLookup.push(card[0]); // extract card name
+              cardLookup.push(card[0]); // extract card name from deck list
             });
             cardLookup.forEach((cardName) => {
-              fetch(
-                `https://db.ygoprodeck.com/api/v7/cardinfo.php?name=${cardName}`,
-              )
-                .then((response) => response.json())
-                .then((result) => {
-                  console.log(result.data[0]);
-                  addCard(result.data[0], "deck-list");
-                });
+              addCard(cards.find((card) => card.name == cardName), "deck-list");
             });
           });
         }
+
+        // On hover, display card info
+        template.querySelector("img").addEventListener("mouseover", (event) => {
+          selectedCard = event.target.id;
+
+
+        })
 
         document.querySelector(`#${identifier}`).appendChild(template);
         filteredCards.push(card);
@@ -105,18 +97,16 @@
 
       function removeCards(identifier) {
         document.querySelector(`#${identifier}`).replaceChildren("");
-        if (identifier == "card-list") {
-          filteredCards = [];
-        }
+
+        if (identifier == "card-list") filteredCards = [];
       }
 
-      let prevPromise;
       const filterByName = document.getElementById("search");
       filterByName.addEventListener("input", () => {
         let filteredByName = cards.filter((card) =>
           card.name.toLowerCase().includes(filterByName.value.toLowerCase()),
         );
-        
+
         removeCards("card-list");
 
         filteredByName.forEach((card) => addCard(card, "card-list"));
