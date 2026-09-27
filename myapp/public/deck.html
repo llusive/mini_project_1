@@ -20,6 +20,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </head>
   <body>
+    <div id="card-info" class="row"></div>
     <div id="deck-list" class="row"></div>
 
     <input type="text" id="search" />
@@ -33,72 +34,67 @@
         ).data,
       ];
 
-      let deckCards = new Map();
-      let filteredCards = [];
-      let selectedCard;
-      function addCard(card, identifier) {
+      const deckList = [];
+
+      function addCard(card, section) {
         const template = document
           .getElementById("card-template")
           .content.cloneNode(true);
         template
           .querySelector("img")
           .setAttribute("src", card.card_images[0].image_url);
-        template.querySelector("img").setAttribute("id", filteredCards.length);
+        template.querySelector("img").setAttribute("id", card.name);
 
-        template.querySelector("img").addEventListener("click", (event) => {
-          selectedCard = filteredCards[event.target.id];
-          addCard(selectedCard, "deck-list");
-          if (identifier == "card-list") {
-            deckCards.set(
-              selectedCard.name,
-              deckCards.has(selectedCard.name)
-                ? deckCards.get(selectedCard.name) + 1
-                : 1,
-            );
-          }
-        });
-
-        if (identifier == "deck-list") { // bugged when removing card, more cards removed than intended
-          template.querySelector("img").addEventListener("click", (event) => {
-            selectedCard = filteredCards[event.target.id];
-
-            // Reduce quantity of that card and remove from map if quantity is 0
-            deckCards.set(
-              selectedCard.name,
-              deckCards.get(selectedCard.name) - 1,
-            );
-            if (deckCards.get(selectedCard.name) == 0)
-              deckCards.delete(selectedCard.name);
-            // note: quantity when clicked in the deck list should minimum be 1, never 0 so resulting quantity cant be -1 since no card to be clicked
-
-            removeCards("deck-list"); // remove all desk list cards
-
-            // re-add the saved deck-list
-            const cardLookup = [];
-            deckCards.entries().forEach((card) => {
-              cardLookup.push(card[0]); // extract card name from deck list
+        // On hover, display card info
+        if (section != "card-info") {
+          template
+            .querySelector("img")
+            .addEventListener("mouseover", (event) => {
+              removeCards("card-info");
+              addCard(
+                cards.find((card) => card.name == event.target.id),
+                "card-info",
+              );
             });
-            cardLookup.forEach((cardName) => {
-              addCard(cards.find((card) => card.name == cardName), "deck-list");
+        }
+
+        // On click, add to deck
+        if (section == "card-list") {
+          template.querySelector("img").addEventListener("click", (event) => {
+            const numCopies = deckList.reduce((total, card) => card.name == event.target.id ? total + 1 : total, 0);
+            
+            // Maximum 3 copies per card in deck
+            if (numCopies < 3) {
+              deckList.push(card);
+              addCard(
+                cards.find((card) => card.name == event.target.id),
+                "deck-list",
+              );
+            }
+          });
+        }
+
+        // On click, remove from deck
+        if (section == "deck-list") {
+          template.querySelector("img").addEventListener("click", (event) => {
+            deckList.splice(
+              deckList.findIndex((card) => card.name == event.target.id),
+              1,
+            );
+
+            removeCards("deck-list");
+
+            deckList.forEach((card) => {
+              addCard(card, "deck-list");
             });
           });
         }
 
-        // On hover, display card info
-        template.querySelector("img").addEventListener("mouseover", (event) => {
-          selectedCard = event.target.id;
-
-
-        })
-
-        document.querySelector(`#${identifier}`).appendChild(template);
-        filteredCards.push(card);
+        document.querySelector(`#${section}`).appendChild(template);
       }
 
-      function removeCards(identifier) {
-        document.querySelector(`#${identifier}`).replaceChildren("");
-
-        if (identifier == "card-list") filteredCards = [];
+      function removeCards(section) {
+        document.querySelector(`#${section}`).replaceChildren("");
       }
 
       const filterByName = document.getElementById("search");
