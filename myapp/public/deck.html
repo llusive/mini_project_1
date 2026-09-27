@@ -48,6 +48,27 @@
         ).data,
       ];
 
+      const banlistTCG = [
+        ...(await fetch("https://db.ygoprodeck.com/api/v7/cardinfo.php?banlist=tcg").then(
+            (response) => response.json(),
+          )
+        ).data,
+      ];
+
+      const banlistOCG = [
+        ...(await fetch("https://db.ygoprodeck.com/api/v7/cardinfo.php?banlist=ocg").then(
+            (response) => response.json(),
+          )
+        ).data,
+      ];
+
+      const banlistGoat = [
+        ...(await fetch("https://db.ygoprodeck.com/api/v7/cardinfo.php?banlist=goat").then(
+            (response) => response.json(),
+          )
+        ).data,
+      ];
+
       const mainDeck = [];
       const extraDeck = [];
 
@@ -83,14 +104,15 @@
               card.frameType == "xyz" ||
               card.frameType == "fusion"
             ) {
-              const numCopies = extraDeck.reduce(
-                (total, card) =>
-                  card.name == event.target.id ? total + 1 : total,
-                0,
-              );
-
               // Maximum 3 copies per card per deck and maximum 15 cards per extra deck
-              if (numCopies < 3 && extraDeck.length < 15) {
+              if (
+                extraDeck.reduce(
+                  (total, card) =>
+                    card.name == event.target.id ? total + 1 : total,
+                  0,
+                ) < 3 &&
+                extraDeck.length < 15
+              ) {
                 extraDeck.push(card);
                 addCard(
                   cards.find((card) => card.name == event.target.id),
@@ -98,14 +120,15 @@
                 );
               }
             } else {
-              const numCopies = mainDeck.reduce(
-                (total, card) =>
-                  card.name == event.target.id ? total + 1 : total,
-                0,
-              );
-
               // Maximum 3 copies per card per deck and maximum 60 cards per main deck
-              if (numCopies < 3 && mainDeck.length < 60) {
+              if (
+                mainDeck.reduce(
+                  (total, card) =>
+                    card.name == event.target.id ? total + 1 : total,
+                  0,
+                ) < 3 &&
+                mainDeck.length < 60
+              ) {
                 mainDeck.push(card);
                 addCard(
                   cards.find((card) => card.name == event.target.id),
