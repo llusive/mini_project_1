@@ -25,10 +25,11 @@
     <input type="text" id="search" />
     <div id="card-list" class="row"></div>
     <script type="module">
-      const cards = await fetch(
+      const result = await fetch(
         "https://db.ygoprodeck.com/api/v7/cardinfo.php",
       ).then((response) => response.json());
-      console.log(cards.data);
+
+      const cards = [...result.data]
 
       function getCards(parameters) {
         return new Promise((resolve) => {
@@ -55,14 +56,14 @@
         template.querySelector("img").addEventListener("click", (event) => {
           selectedCard = filteredCards[event.target.id];
           addCard(selectedCard, "deck-list");
-            if (identifier == "card-list") {
-              deckCards.set(
-                selectedCard.name,
-                deckCards.has(selectedCard.name)
-                  ? deckCards.get(selectedCard.name) + 1
-                  : 1,
-              );
-            }
+          if (identifier == "card-list") {
+            deckCards.set(
+              selectedCard.name,
+              deckCards.has(selectedCard.name)
+                ? deckCards.get(selectedCard.name) + 1
+                : 1,
+            );
+          }
         });
 
         if (identifier == "deck-list") {
@@ -112,17 +113,13 @@
       let prevPromise;
       const filterByName = document.getElementById("search");
       filterByName.addEventListener("input", () => {
-        Promise.reject(prevPromise).catch((response) => console.log(response));
-        const currPromise = getCards(filterByName.value);
-        Promise.resolve(currPromise)
-          .then((result) => {
-            prevPromise = currPromise;
-            removeCards("card-list");
-            result.data.forEach((card) => {
-              addCard(card, "card-list");
-            });
-          })
-          .catch(() => console.log("Card not found"));
+        let filteredByName = cards.filter((card) =>
+          card.name.toLowerCase().includes(filterByName.value.toLowerCase()),
+        );
+        
+        removeCards("card-list");
+
+        filteredByName.forEach((card) => addCard(card, "card-list"));
       });
     </script>
   </body>
