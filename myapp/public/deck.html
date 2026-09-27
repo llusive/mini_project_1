@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <template id="card-template">
-    <div class="card col-8" style="width: 18rem;">
+    <div class="card col-8" style="width: 18rem">
       <div class="card-body">
         <img class="img-fluid" alt="Card image" />
         <!-- <h5 class="card-name">Card name</h5>
@@ -19,7 +19,7 @@
     />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </head>
-  <body>    
+  <body>
     <div id="deck-list" class="row"></div>
 
     <input type="text" id="search" />
@@ -39,44 +39,70 @@
           );
         });
       }
-      
-      let deckCards = new Map;
+
+      let deckCards = new Map();
       let filteredCards = [];
       let selectedCard;
       function addCard(card, identifier) {
         const template = document
           .getElementById("card-template")
           .content.cloneNode(true);
-        template.querySelector("img").setAttribute("src", card.card_images[0].image_url);
-        template.querySelector("img").setAttribute("id", filteredCards.length); // Save reference in the card body to the card's data in the filtered results
+        template
+          .querySelector("img")
+          .setAttribute("src", card.card_images[0].image_url);
+        template.querySelector("img").setAttribute("id", filteredCards.length);
+
         template.querySelector("img").addEventListener("click", (event) => {
           selectedCard = filteredCards[event.target.id];
-          console.log(selectedCard);
-          console.log(identifier);
           addCard(selectedCard, "deck-list");
-          if (identifier == "card-list") {
-            deckCards.set(selectedCard.name, deckCards.has(selectedCard.name) ? deckCards.get(selectedCard.name) + 1 : 1);
-            console.log(deckCards);
-          }
-        })
+            if (identifier == "card-list") {
+              deckCards.set(
+                selectedCard.name,
+                deckCards.has(selectedCard.name)
+                  ? deckCards.get(selectedCard.name) + 1
+                  : 1,
+              );
+            }
+        });
+
         if (identifier == "deck-list") {
           template.querySelector("img").addEventListener("click", (event) => {
-            removeCards("deck-list");
-            console.log(identifier);
             selectedCard = filteredCards[event.target.id];
-            deckCards.set(selectedCard.name, deckCards.get(selectedCard.name) - 1);
-            if (deckCards.get(selectedCard.name) == 0) deckCards.delete(selectedCard.name);
-            console.log(deckCards);
-          })
-        } // bug where cards undefined when 1 card is removed from deck
-        
+
+            // Reduce quantity of that card and remove from map if quantity is 0
+            deckCards.set(
+              selectedCard.name,
+              deckCards.get(selectedCard.name) - 1,
+            );
+            if (deckCards.get(selectedCard.name) == 0)
+              deckCards.delete(selectedCard.name);
+            // note: quantity when clicked in the deck list should minimum be 1, never 0 so resulting quantity cant be -1 since no card to be clicked
+
+            removeCards("deck-list"); // remove all desk list cards
+
+            // re-add the saved deck-list
+            const cardLookup = [];
+            deckCards.entries().forEach((card) => {
+              cardLookup.push(card[0]); // extract card name
+            });
+            cardLookup.forEach((cardName) => {
+              fetch(
+                `https://db.ygoprodeck.com/api/v7/cardinfo.php?name=${cardName}`,
+              )
+                .then((response) => response.json())
+                .then((result) => {
+                  console.log(result.data[0]);
+                  addCard(result.data[0], "deck-list");
+                });
+            });
+          });
+        }
+
         document.querySelector(`#${identifier}`).appendChild(template);
         filteredCards.push(card);
-        console.log(filteredCards);
       }
 
       function removeCards(identifier) {
-        //document.querySelector("#card-info").replaceChildren("");
         document.querySelector(`#${identifier}`).replaceChildren("");
         if (identifier == "card-list") {
           filteredCards = [];
@@ -86,11 +112,7 @@
       let prevPromise;
       const filterByName = document.getElementById("search");
       filterByName.addEventListener("input", () => {
-        // getCards(filterByName.value).then((result) => result.data.forEach((card) => addCard(card)));
-        
-        Promise.reject(prevPromise).catch((rejected) => {
-            console.log(filterByName.value, "Old promise rejected", rejected);
-          });
+        Promise.reject(prevPromise).catch((response) => console.log(response));
         const currPromise = getCards(filterByName.value);
         Promise.resolve(currPromise)
           .then((result) => {
@@ -98,11 +120,10 @@
             removeCards("card-list");
             result.data.forEach((card) => {
               addCard(card, "card-list");
-            })
+            });
           })
+          .catch(() => console.log("Card not found"));
       });
-
-      
     </script>
   </body>
 </html>
