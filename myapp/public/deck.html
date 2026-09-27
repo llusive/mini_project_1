@@ -21,7 +21,8 @@
   </head>
   <body>
     <div id="card-info" class="row"></div>
-    <div id="deck-list" class="row"></div>
+    <div id="main-deck" class="row"></div>
+    <div id="extra-deck" class="row"></div>
 
     <input type="text" id="search" />
     <div id="card-list" class="row"></div>
@@ -34,7 +35,8 @@
         ).data,
       ];
 
-      const deckList = [];
+      const mainDeck = [];
+      const extraDeck = [];
 
       function addCard(card, section) {
         const template = document
@@ -61,31 +63,74 @@
         // On click, add to deck
         if (section == "card-list") {
           template.querySelector("img").addEventListener("click", (event) => {
-            const numCopies = deckList.reduce((total, card) => card.name == event.target.id ? total + 1 : total, 0);
-            
-            // Maximum 3 copies per card in deck
-            if (numCopies < 3) {
-              deckList.push(card);
-              addCard(
-                cards.find((card) => card.name == event.target.id),
-                "deck-list",
+            // Determine if card belongs in main deck or extra deck
+            if (
+              card.frameType == "link" ||
+              card.frameType == "synchro" ||
+              card.frameType == "xyz" ||
+              card.frameType == "fusion"
+            ) {
+              const numCopies = extraDeck.reduce(
+                (total, card) =>
+                  card.name == event.target.id ? total + 1 : total,
+                0,
               );
+
+              // Maximum 3 copies per card per deck and maximum 15 cards per extra deck
+              if (numCopies < 3 && extraDeck.length < 15) {
+                extraDeck.push(card);
+                addCard(
+                  cards.find((card) => card.name == event.target.id),
+                  "extra-deck",
+                );
+              }
+            } else {
+              const numCopies = mainDeck.reduce(
+                (total, card) =>
+                  card.name == event.target.id ? total + 1 : total,
+                0,
+              );
+
+              // Maximum 3 copies per card per deck and maximum 60 cards per main deck
+              if (numCopies < 3 && mainDeck.length < 60) {
+                mainDeck.push(card);
+                addCard(
+                  cards.find((card) => card.name == event.target.id),
+                  "main-deck",
+                );
+              }
             }
           });
         }
 
-        // On click, remove from deck
-        if (section == "deck-list") {
+        // On click, remove from main deck
+        if (section == "main-deck") {
           template.querySelector("img").addEventListener("click", (event) => {
-            deckList.splice(
-              deckList.findIndex((card) => card.name == event.target.id),
+            mainDeck.splice(
+              mainDeck.findIndex((card) => card.name == event.target.id),
               1,
             );
 
-            removeCards("deck-list");
+            removeCards("main-deck");
 
-            deckList.forEach((card) => {
-              addCard(card, "deck-list");
+            mainDeck.forEach((card) => {
+              addCard(card, "main-deck");
+            });
+          });
+        }
+
+        // On click, remove from extra deck
+        if (section == "extra-deck") {
+          template.querySelector("img").addEventListener("click", (event) => {
+            extraDeck.splice(
+              extraDeck.findIndex((card) => card.name == event.target.id),
+              1,
+            );
+
+            removeCards("extra-deck");
+
+            extraDeck.forEach((card) => {
+              addCard(card, "extra-deck");
             });
           });
         }
