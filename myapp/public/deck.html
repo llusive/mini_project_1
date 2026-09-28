@@ -128,22 +128,24 @@
       };
       const extraDeck = {
         cards: [],
-        // Extra deck (non-effect first, then effect, then pendulum)
         fusionMonsterCards: [],
         fusionTunerMonsterCards: [],
-        synchroMonsterCards: [],
-        xyzMonsterCards: [],
-        linkMonsterCards: [],
         fusionEffectMonsterCards: [],
         fusionToonEffectMonsterCards: [],
         fusionTunerEffectMonsterCards: [],
+        fusionPendulumEffectMonsterCards: [],
+        
+        synchroMonsterCards: [],
         synchroEffectMonsterCards: [],
         synchroTunerEffectMonsterCards: [],
-        xyzEffectMonsterCards: [],
-        linkEffectMonsterCards: [],
-        fusionPendulumEffectMonsterCards: [],
         synchroPendulumEffectMonsterCards: [],
+        
+        xyzMonsterCards: [],
+        xyzEffectMonsterCards: [],
         xyzPendulumEffectMonsterCards: [],
+
+        linkMonsterCards: [],
+        linkEffectMonsterCards: [],
       };
       const filteredCards = {
         normalMonsterCards: [],
@@ -170,19 +172,22 @@
 
         fusionMonsterCards: [],
         fusionTunerMonsterCards: [],
-        synchroMonsterCards: [],
-        xyzMonsterCards: [],
-        linkMonsterCards: [],
         fusionEffectMonsterCards: [],
         fusionToonEffectMonsterCards: [],
         fusionTunerEffectMonsterCards: [],
+        fusionPendulumEffectMonsterCards: [],
+        
+        synchroMonsterCards: [],
         synchroEffectMonsterCards: [],
         synchroTunerEffectMonsterCards: [],
-        xyzEffectMonsterCards: [],
-        linkEffectMonsterCards: [],
-        fusionPendulumEffectMonsterCards: [],
         synchroPendulumEffectMonsterCards: [],
+        
+        xyzMonsterCards: [],
+        xyzEffectMonsterCards: [],
         xyzPendulumEffectMonsterCards: [],
+
+        linkMonsterCards: [],
+        linkEffectMonsterCards: [],
 
         normalSpellCards: [],
         quickPlaySpellCards: [],
@@ -196,7 +201,7 @@
         counterTrapCards: [],
       };
 
-      const ARROWS = {
+      const LINK_MARKERS = {
         Top: "↑",
         Bottom: "↓",
         Left: "←",
@@ -247,16 +252,16 @@
                   monsterStats +=
                     "[☆" + card.level + "] " + card.atk + "/" + card.def;
                 } else if (card.type.includes("Link")) {
-                  monsterStats += card.atk + "/LINK " + card.linkval + "  ";
+                  monsterStats += card.atk + "/LINK " + card.linkval + " ";
                   card.linkmarkers.forEach((direction) => {
-                    monsterStats += "[" + ARROWS[direction] + "]";
+                    monsterStats += "[" + LINK_MARKERS[direction] + "]";
                   });
                 } else {
                   monsterStats +=
                     "[★" + card.level + "] " + card.atk + "/" + card.def;
 
                   if (card.type.includes("Pendulum"))
-                    monsterStats += "  " + card.scale + "/" + card.scale;
+                    monsterStats += " " + card.scale + "/" + card.scale;
                 }
                 document.getElementById("monster-stats").innerText =
                   monsterStats;
