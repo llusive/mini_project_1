@@ -32,9 +32,15 @@
         <div class="col">
           <button id="sort">Sort</button>
           <button id="clear">Clear</button>
-          <h1>Main Deck</h1>
+          <div class="row">
+            <h1 class="col">Main Deck:</h1>
+            <h1 id="main-deck-count" class="col"></h1>
+          </div>
           <div id="main-deck" class="row"></div>
-          <h1>Extra Deck</h1>
+          <div class="row">
+            <h1 class="col">Extra Deck:</h1>
+            <h1 id="extra-deck-count" class="col"></h1>
+          </div>
           <div id="extra-deck" class="row"></div>
         </div>
         <div class="col">
@@ -134,12 +140,12 @@
         fusionToonEffectMonsterCards: [],
         fusionTunerEffectMonsterCards: [],
         fusionPendulumEffectMonsterCards: [],
-        
+
         synchroMonsterCards: [],
         synchroEffectMonsterCards: [],
         synchroTunerEffectMonsterCards: [],
         synchroPendulumEffectMonsterCards: [],
-        
+
         xyzMonsterCards: [],
         xyzEffectMonsterCards: [],
         xyzPendulumEffectMonsterCards: [],
@@ -176,12 +182,12 @@
         fusionToonEffectMonsterCards: [],
         fusionTunerEffectMonsterCards: [],
         fusionPendulumEffectMonsterCards: [],
-        
+
         synchroMonsterCards: [],
         synchroEffectMonsterCards: [],
         synchroTunerEffectMonsterCards: [],
         synchroPendulumEffectMonsterCards: [],
-        
+
         xyzMonsterCards: [],
         xyzEffectMonsterCards: [],
         xyzPendulumEffectMonsterCards: [],
@@ -211,6 +217,11 @@
         "Bottom-Left": "↙",
         "Bottom-Right": "↘",
       };
+
+      document.getElementById("main-deck-count").innerText =
+        mainDeck.cards.length;
+      document.getElementById("extra-deck-count").innerText =
+        extraDeck.cards.length;
 
       function addCard(card, section) {
         const template = document
@@ -297,6 +308,7 @@
               ) {
                 extraDeck.cards.push(card);
                 extraDeck[cardType].push(card);
+
                 addCard(
                   cards.find((card) => card.name == event.target.id),
                   "extra-deck",
@@ -367,11 +379,20 @@
           });
         }
 
+        document.getElementById("main-deck-count").innerText =
+          mainDeck.cards.length;
+        document.getElementById("extra-deck-count").innerText =
+          extraDeck.cards.length;
+
         document.querySelector(`#${section}`).appendChild(template);
       }
 
       function removeCards(section) {
         document.querySelector(`#${section}`).replaceChildren("");
+        document.getElementById("main-deck-count").innerText =
+          mainDeck.cards.length;
+        document.getElementById("extra-deck-count").innerText =
+          extraDeck.cards.length;
       }
 
       // Sort deck
@@ -411,6 +432,11 @@
 
         extraDeck.cards.length = 0;
         for (const cardType in extraDeck) extraDeck[cardType].length = 0;
+
+        document.getElementById("main-deck-count").innerText =
+          mainDeck.cards.length;
+        document.getElementById("extra-deck-count").innerText =
+          extraDeck.cards.length;
 
         removeCards("main-deck");
         removeCards("extra-deck");
