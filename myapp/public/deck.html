@@ -50,6 +50,18 @@
         ).data,
       ];
 
+      // Print all card types
+      /* console.log([
+        ...new Set(
+          cards
+            .filter(
+              (card) =>
+                !card.humanReadableCardType.toLowerCase().includes("skill"),
+            )
+            .map((card) => card.humanReadableCardType),
+        ),
+      ]); */
+
       const banlistTCG = [
         ...(
           await fetch(
@@ -75,30 +87,110 @@
 
       const mainDeck = {
         cards: [],
+        // Main deck monsters
         normalMonsterCards: [],
+        tunerNormalMonsterCards: [],
         effectMonsterCards: [],
+        flipEffectMonsterCards: [],
+        flipTunerEffectMonsterCards: [],
+        geminiEffectMonsterCards: [],
+        spiritEffectMonsterCards: [],
+        unionEffectMonsterCards: [],
+        ritualMonsterCards: [],
         ritualEffectMonsterCards: [],
+        ritualFlipEffectMonsterCards: [],
+        ritualTunerEffectMonsterCards: [],
+        tunerEffectMonsterCards: [],
+        toonEffectMonsterCards: [],
+        pendulumNormalMonsterCards: [],
+        pendulumTunerNormalMonsterCards: [],
         pendulumEffectMonsterCards: [],
+        pendulumTunerEffectMonsterCards: [],
+        pendulumFlipEffectMonsterCards: [],
+        pendulumSpiritEffectMonsterCards: [],
+        ritualPendulumEffectMonsterCards: [],
+
+        // Spells
         normalSpellCards: [],
         quickPlaySpellCards: [],
         continuousSpellCards: [],
         ritualSpellCards: [],
         equipSpellCards: [],
         fieldSpellCards: [],
+
+        // Traps
         normalTrapCards: [],
         continuousTrapCards: [],
         counterTrapCards: [],
       };
       const extraDeck = {
         cards: [],
+        // Extra deck (non-effect first, then effect, then pendulum)
         fusionMonsterCards: [],
+        fusionTunerMonsterCards: [],
         synchroMonsterCards: [],
         xyzMonsterCards: [],
         linkMonsterCards: [],
         fusionEffectMonsterCards: [],
+        fusionToonEffectMonsterCards: [],
+        fusionTunerEffectMonsterCards: [],
         synchroEffectMonsterCards: [],
+        synchroTunerEffectMonsterCards: [],
         xyzEffectMonsterCards: [],
         linkEffectMonsterCards: [],
+        fusionPendulumEffectMonsterCards: [],
+        synchroPendulumEffectMonsterCards: [],
+        xyzPendulumEffectMonsterCards: [],
+      };
+      const filteredCards = {
+        normalMonsterCards: [],
+        tunerNormalMonsterCards: [],
+        effectMonsterCards: [],
+        flipEffectMonsterCards: [],
+        flipTunerEffectMonsterCards: [],
+        geminiEffectMonsterCards: [],
+        spiritEffectMonsterCards: [],
+        unionEffectMonsterCards: [],
+        ritualMonsterCards: [],
+        ritualEffectMonsterCards: [],
+        ritualFlipEffectMonsterCards: [],
+        ritualTunerEffectMonsterCards: [],
+        tunerEffectMonsterCards: [],
+        toonEffectMonsterCards: [],
+        pendulumNormalMonsterCards: [],
+        pendulumTunerNormalMonsterCards: [],
+        pendulumEffectMonsterCards: [],
+        pendulumTunerEffectMonsterCards: [],
+        pendulumFlipEffectMonsterCards: [],
+        pendulumSpiritEffectMonsterCards: [],
+        ritualPendulumEffectMonsterCards: [],
+
+        fusionMonsterCards: [],
+        fusionTunerMonsterCards: [],
+        synchroMonsterCards: [],
+        xyzMonsterCards: [],
+        linkMonsterCards: [],
+        fusionEffectMonsterCards: [],
+        fusionToonEffectMonsterCards: [],
+        fusionTunerEffectMonsterCards: [],
+        synchroEffectMonsterCards: [],
+        synchroTunerEffectMonsterCards: [],
+        xyzEffectMonsterCards: [],
+        linkEffectMonsterCards: [],
+        fusionPendulumEffectMonsterCards: [],
+        synchroPendulumEffectMonsterCards: [],
+        xyzPendulumEffectMonsterCards: [],
+
+        normalSpellCards: [],
+        quickPlaySpellCards: [],
+        continuousSpellCards: [],
+        ritualSpellCards: [],
+        equipSpellCards: [],
+        fieldSpellCards: [],
+
+        normalTrapCards: [],
+        continuousTrapCards: [],
+        counterTrapCards: [],
       };
 
       function addCard(card, section) {
@@ -113,7 +205,8 @@
         const cardFrameType = card.frameType;
         const cardType =
           card.humanReadableCardType.charAt(0).toLowerCase() +
-          card.humanReadableCardType.split(/[ -]/).join("").slice(1) + "Cards";
+          card.humanReadableCardType.split(/[ -]/).join("").slice(1) +
+          "Cards";
 
         // On hover, display card info
         if (section != "card-image") {
@@ -165,7 +258,6 @@
                 mainDeck.cards.length < 60
               ) {
                 mainDeck.cards.push(card);
-                console.log(cardType);
                 mainDeck[cardType].push(card);
                 addCard(
                   cards.find((card) => card.name == event.target.id),
@@ -229,18 +321,10 @@
 
       // Sort deck
       document.getElementById("sort").addEventListener("click", () => {
-        for (const cardType in mainDeck) {
-          console.log("Unsorted: ", cardType, mainDeck[cardType]);
+        for (const cardType in mainDeck)
           mainDeck[cardType].sort((a, b) => a.name.localeCompare(b.name));
-          console.log("Sorted: ", cardType, mainDeck[cardType]);
-        }
-        for (const cardType in extraDeck) {
-          console.log("Unsorted: ", cardType, extraDeck[cardType]);
+        for (const cardType in extraDeck)
           extraDeck[cardType].sort((a, b) => a.name.localeCompare(b.name));
-          console.log("Sorted: ", cardType, extraDeck[cardType]);
-        }
-        /* mainDeck.cards.sort((a, b) => a.name.localeCompare(b.name));
-        extraDeck.cards.sort((a, b) => a.name.localeCompare(b.name)); */
 
         removeCards("main-deck");
         removeCards("extra-deck");
@@ -250,22 +334,16 @@
           if (cardType === "cards") continue;
           mainDeck[cardType].forEach((card) => {
             sortedMainDeck.push(card);
-          })
+          });
         }
-        console.log(sortedMainDeck);
 
         const sortedExtraDeck = [];
         for (const cardType in extraDeck) {
           if (cardType === "cards") continue;
           extraDeck[cardType].forEach((card) => {
             sortedExtraDeck.push(card);
-          })
+          });
         }
-        console.log(sortedExtraDeck);
-        
-
-        /* mainDeck.cards.forEach((card) => addCard(card, "main-deck"));
-        extraDeck.cards.forEach((card) => addCard(card, "extra-deck")); */
 
         sortedMainDeck.forEach((card) => addCard(card, "main-deck"));
         sortedExtraDeck.forEach((card) => addCard(card, "extra-deck"));
@@ -274,22 +352,50 @@
       // Clear deck
       document.getElementById("clear").addEventListener("click", () => {
         mainDeck.cards.length = 0;
+        for (const cardType in mainDeck)
+          mainDeck[cardType].length = 0;
+
         extraDeck.cards.length = 0;
+        for (const cardType in extraDeck)
+          extraDeck[cardType].length = 0;
 
         removeCards("main-deck");
         removeCards("extra-deck");
       });
 
-      // Filter by card name
-      const filterByName = document.getElementById("search");
-      filterByName.addEventListener("input", () => {
-        let filteredByName = cards.filter((card) =>
-          card.name.toLowerCase().includes(filterByName.value.toLowerCase()),
+      // Filter by card name and card description based on current search input
+      const filterBySearch = document.getElementById("search");
+      filterBySearch.addEventListener("input", () => {
+        const filteredByName = cards.filter((card) =>
+          card.name.toLowerCase().includes(filterBySearch.value.toLowerCase()),
         );
+
+        const filteredByDescription = cards.filter((card) =>
+          card.desc.toLowerCase().includes(filterBySearch.value.toLowerCase()),
+        );
+
+        const filteredResults = Array.from(
+          new Set([...filteredByName, ...filteredByDescription]),
+        );
+
+        for (const cardType in filteredCards)
+          filteredCards[cardType].length = 0;
+        filteredResults.forEach((card) => {
+          const cardFrameType = card.frameType;
+          const cardType =
+            card.humanReadableCardType.charAt(0).toLowerCase() +
+            card.humanReadableCardType.split(/[ -]/).join("").slice(1) +
+            "Cards";
+
+          // Ignore card types that were not pre-declared in mainDeck, extraDeck and filteredCards
+          if (filteredCards[cardType]) filteredCards[cardType].push(card);
+        });
 
         removeCards("card-list");
 
-        filteredByName.forEach((card) => addCard(card, "card-list"));
+        for (const cardType in filteredCards) {
+          filteredCards[cardType].forEach((card) => addCard(card, "card-list"));
+        }
       });
     </script>
   </body>
