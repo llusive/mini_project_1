@@ -47,13 +47,12 @@
     </div>
 
     <script type="module">
-      const cards = [
-        ...(
-          await fetch("https://db.ygoprodeck.com/api/v7/cardinfo.php").then(
-            (response) => response.json(),
-          )
-        ).data,
-      ];
+      const cards = (
+        await fetch("https://db.ygoprodeck.com/api/v7/cardinfo.php").then(
+          (response) => response.json(),
+        )
+      ).data;
+      console.log(cards);
 
       // Print all card types
       /* console.log([
@@ -67,21 +66,17 @@
         ),
       ]); */
 
-      const banlistTCG = [
-        ...(
-          await fetch(
-            "https://db.ygoprodeck.com/api/v7/cardinfo.php?banlist=tcg",
-          ).then((response) => response.json())
-        ).data,
-      ];
+      const banlistTCG = (
+        await fetch(
+          "https://db.ygoprodeck.com/api/v7/cardinfo.php?banlist=tcg",
+        ).then((response) => response.json())
+      ).data;
 
-      const banlistOCG = [
-        ...(
-          await fetch(
-            "https://db.ygoprodeck.com/api/v7/cardinfo.php?banlist=ocg",
-          ).then((response) => response.json())
-        ).data,
-      ];
+      const banlistOCG = (
+        await fetch(
+          "https://db.ygoprodeck.com/api/v7/cardinfo.php?banlist=ocg",
+        ).then((response) => response.json())
+      ).data;
 
       /* const banlistGoat = [
         ...(await fetch("https://db.ygoprodeck.com/api/v7/cardinfo.php?banlist=goat").then(
@@ -441,6 +436,10 @@
       // Filter by card name and card description based on current search input
       const filterBySearch = document.getElementById("search");
       filterBySearch.addEventListener("input", () => {
+        // Starts filtering only when at least 2 characters are in the search input
+        // Note: this cannot search the card named "7" by card name alone, must be 
+        // found via card description;this applies to any cards with card names 
+        // that are 2 or less in length
         if (filterBySearch.value.length > 2) {
           const filteredByName = cards.filter((card) =>
             card.name
