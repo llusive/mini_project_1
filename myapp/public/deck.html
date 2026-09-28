@@ -227,17 +227,51 @@
         document.querySelector(`#${section}`).replaceChildren("");
       }
 
+      // Sort deck
       document.getElementById("sort").addEventListener("click", () => {
-        mainDeck.cards.sort((a, b) => a.name.localeCompare(b.name));
-        extraDeck.cards.sort((a, b) => a.name.localeCompare(b.name));
+        for (const cardType in mainDeck) {
+          console.log("Unsorted: ", cardType, mainDeck[cardType]);
+          mainDeck[cardType].sort((a, b) => a.name.localeCompare(b.name));
+          console.log("Sorted: ", cardType, mainDeck[cardType]);
+        }
+        for (const cardType in extraDeck) {
+          console.log("Unsorted: ", cardType, extraDeck[cardType]);
+          extraDeck[cardType].sort((a, b) => a.name.localeCompare(b.name));
+          console.log("Sorted: ", cardType, extraDeck[cardType]);
+        }
+        /* mainDeck.cards.sort((a, b) => a.name.localeCompare(b.name));
+        extraDeck.cards.sort((a, b) => a.name.localeCompare(b.name)); */
 
         removeCards("main-deck");
         removeCards("extra-deck");
 
-        mainDeck.cards.forEach((card) => addCard(card, "main-deck"));
-        extraDeck.cards.forEach((card) => addCard(card, "extra-deck"));
+        const sortedMainDeck = [];
+        for (const cardType in mainDeck) {
+          if (cardType === "cards") continue;
+          mainDeck[cardType].forEach((card) => {
+            sortedMainDeck.push(card);
+          })
+        }
+        console.log(sortedMainDeck);
+
+        const sortedExtraDeck = [];
+        for (const cardType in extraDeck) {
+          if (cardType === "cards") continue;
+          extraDeck[cardType].forEach((card) => {
+            sortedExtraDeck.push(card);
+          })
+        }
+        console.log(sortedExtraDeck);
+        
+
+        /* mainDeck.cards.forEach((card) => addCard(card, "main-deck"));
+        extraDeck.cards.forEach((card) => addCard(card, "extra-deck")); */
+
+        sortedMainDeck.forEach((card) => addCard(card, "main-deck"));
+        sortedExtraDeck.forEach((card) => addCard(card, "extra-deck"));
       });
 
+      // Clear deck
       document.getElementById("clear").addEventListener("click", () => {
         mainDeck.cards.length = 0;
         extraDeck.cards.length = 0;
@@ -246,6 +280,7 @@
         removeCards("extra-deck");
       });
 
+      // Filter by card name
       const filterByName = document.getElementById("search");
       filterByName.addEventListener("input", () => {
         let filteredByName = cards.filter((card) =>
