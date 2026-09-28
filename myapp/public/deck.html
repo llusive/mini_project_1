@@ -25,22 +25,18 @@
           <div id="card-image" class="row"></div>
           <h2 id="card-name" class="row"></h2>
           <h3 id="card-typing" class="row"></h3>
-          <h3 id="monster-stats" class="row"></h3>
+          <h3 id="monster-card-stats" class="row"></h3>
           <h3 id="card-archetype" class="row"></h3>
           <p id="card-desc" class="row"></p>
         </div>
         <div class="col">
-          <button id="sort">Sort</button>
-          <button id="clear">Clear</button>
           <div class="row">
-            <h1 class="col">Main Deck:</h1>
-            <h1 id="main-deck-count" class="col"></h1>
+            <button id="sort" class="col">Sort</button>
+            <button id="clear" class="col">Clear</button>
           </div>
+          <h1 id="main-deck-count" class="row"></h1>
           <div id="main-deck" class="row"></div>
-          <div class="row">
-            <h1 class="col">Extra Deck:</h1>
-            <h1 id="extra-deck-count" class="col"></h1>
-          </div>
+          <h1 id="extra-deck-count" class="row"></h1>
           <div id="extra-deck" class="row"></div>
         </div>
         <div class="col">
@@ -218,10 +214,8 @@
         "Bottom-Right": "↘",
       };
 
-      document.getElementById("main-deck-count").innerText =
-        mainDeck.cards.length;
-      document.getElementById("extra-deck-count").innerText =
-        extraDeck.cards.length;
+      document.getElementById("main-deck-count").innerText = "Main Deck: " + mainDeck.cards.length;
+      document.getElementById("extra-deck-count").innerText = "Extra Deck: " + extraDeck.cards.length;
 
       function addCard(card, section) {
         const template = document
@@ -274,10 +268,10 @@
                   if (card.type.includes("Pendulum"))
                     monsterStats += " " + card.scale + "/" + card.scale;
                 }
-                document.getElementById("monster-stats").innerText =
+                document.getElementById("monster-card-stats").innerText =
                   monsterStats;
               } else {
-                document.getElementById("monster-stats").innerText = "";
+                document.getElementById("monster-card-stats").innerText = "";
               }
               document.getElementById("card-typing").innerText = cardTyping;
 
@@ -379,20 +373,16 @@
           });
         }
 
-        document.getElementById("main-deck-count").innerText =
-          mainDeck.cards.length;
-        document.getElementById("extra-deck-count").innerText =
-          extraDeck.cards.length;
+        document.getElementById("main-deck-count").innerText = "Main Deck: " + mainDeck.cards.length;
+        document.getElementById("extra-deck-count").innerText = "Extra Deck: " +   extraDeck.cards.length;
 
         document.querySelector(`#${section}`).appendChild(template);
       }
 
       function removeCards(section) {
         document.querySelector(`#${section}`).replaceChildren("");
-        document.getElementById("main-deck-count").innerText =
-          mainDeck.cards.length;
-        document.getElementById("extra-deck-count").innerText =
-          extraDeck.cards.length;
+        document.getElementById("main-deck-count").innerText = "Main Deck: " + mainDeck.cards.length;
+        document.getElementById("extra-deck-count").innerText = "Extra Deck: " +   extraDeck.cards.length;
       }
 
       // Sort deck
@@ -433,10 +423,8 @@
         extraDeck.cards.length = 0;
         for (const cardType in extraDeck) extraDeck[cardType].length = 0;
 
-        document.getElementById("main-deck-count").innerText =
-          mainDeck.cards.length;
-        document.getElementById("extra-deck-count").innerText =
-          extraDeck.cards.length;
+        document.getElementById("main-deck-count").innerText = "Main Deck: " + mainDeck.cards.length;
+        document.getElementById("extra-deck-count").innerText = "Extra Deck: " +   extraDeck.cards.length;
 
         removeCards("main-deck");
         removeCards("extra-deck");
