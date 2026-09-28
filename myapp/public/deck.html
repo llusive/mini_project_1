@@ -24,6 +24,9 @@
           <h1>Card Information</h1>
           <div id="card-image" class="row"></div>
           <h2 id="card-name" class="row"></h2>
+          <h3 id="card-typing" class="row"></h3>
+          <h3 id="monster-stats" class="row"></h3>
+          <h3 id="card-archetype" class="row"></h3>
           <p id="card-desc" class="row"></p>
         </div>
         <div class="col">
@@ -193,6 +196,17 @@
         counterTrapCards: [],
       };
 
+      const ARROWS = {
+        Top: "↑",
+        Bottom: "↓",
+        Left: "←",
+        Right: "→",
+        "Top-Left": "↖",
+        "Top-Right": "↗",
+        "Bottom-Left": "↙",
+        "Bottom-Right": "↘",
+      };
+
       function addCard(card, section) {
         const template = document
           .getElementById("card-template")
@@ -219,6 +233,42 @@
                 "card-image",
               );
               document.getElementById("card-name").innerText = card.name;
+
+              let cardTyping = "";
+              cardTyping +=
+                "[" +
+                card.humanReadableCardType.split(" ").reverse().join("|") +
+                "] ";
+              if (card.type.includes("Monster")) {
+                cardTyping += card.attribute + " " + card.race;
+                let monsterStats = "";
+                // Check for monster frame-specific stats
+                if (card.type.includes("XYZ")) {
+                  monsterStats +=
+                    "[☆" + card.level + "] " + card.atk + "/" + card.def;
+                } else if (card.type.includes("Link")) {
+                  monsterStats += card.atk + "/LINK " + card.linkval + "  ";
+                  card.linkmarkers.forEach((direction) => {
+                    monsterStats += "[" + ARROWS[direction] + "]";
+                  });
+                } else {
+                  monsterStats +=
+                    "[★" + card.level + "] " + card.atk + "/" + card.def;
+
+                  if (card.type.includes("Pendulum"))
+                    monsterStats += "  " + card.scale + "/" + card.scale;
+                }
+                document.getElementById("monster-stats").innerText =
+                  monsterStats;
+              } else {
+                document.getElementById("monster-stats").innerText = "";
+              }
+              document.getElementById("card-typing").innerText = cardTyping;
+
+              if (card.archetype)
+                document.getElementById("card-archetype").innerText =
+                  "Archetype: " + card.archetype;
+
               document.getElementById("card-desc").innerText = card.desc;
             });
         } else {
@@ -352,12 +402,10 @@
       // Clear deck
       document.getElementById("clear").addEventListener("click", () => {
         mainDeck.cards.length = 0;
-        for (const cardType in mainDeck)
-          mainDeck[cardType].length = 0;
+        for (const cardType in mainDeck) mainDeck[cardType].length = 0;
 
         extraDeck.cards.length = 0;
-        for (const cardType in extraDeck)
-          extraDeck[cardType].length = 0;
+        for (const cardType in extraDeck) extraDeck[cardType].length = 0;
 
         removeCards("main-deck");
         removeCards("extra-deck");
