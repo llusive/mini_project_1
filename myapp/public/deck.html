@@ -73,8 +73,33 @@
         ).data,
       ]; */
 
-      const mainDeck = [];
-      const extraDeck = [];
+      const mainDeck = {
+        cards: [],
+        normalMonsterCards: [],
+        effectMonsterCards: [],
+        ritualEffectMonsterCards: [],
+        pendulumEffectMonsterCards: [],
+        normalSpellCards: [],
+        quickPlaySpellCards: [],
+        continuousSpellCards: [],
+        ritualSpellCards: [],
+        equipSpellCards: [],
+        fieldSpellCards: [],
+        normalTrapCards: [],
+        continuousTrapCards: [],
+        counterTrapCards: [],
+      };
+      const extraDeck = {
+        cards: [],
+        fusionMonsterCards: [],
+        synchroMonsterCards: [],
+        xyzMonsterCards: [],
+        linkMonsterCards: [],
+        fusionEffectMonsterCards: [],
+        synchroEffectMonsterCards: [],
+        xyzEffectMonsterCards: [],
+        linkEffectMonsterCards: [],
+      };
 
       function addCard(card, section) {
         const template = document
@@ -84,6 +109,11 @@
           .querySelector("img")
           .setAttribute("src", card.card_images[0].image_url);
         template.querySelector("img").setAttribute("id", card.name);
+
+        const cardFrameType = card.frameType;
+        const cardType =
+          card.humanReadableCardType.charAt(0).toLowerCase() +
+          card.humanReadableCardType.split(/[ -]/).join("").slice(1) + "Cards";
 
         // On hover, display card info
         if (section != "card-image") {
@@ -107,22 +137,18 @@
         if (section == "card-list") {
           template.querySelector("img").addEventListener("click", (event) => {
             // Determine if card belongs in main deck or extra deck
-            if (
-              card.frameType == "link" ||
-              card.frameType == "synchro" ||
-              card.frameType == "xyz" ||
-              card.frameType == "fusion"
-            ) {
+            if (["fusion", "synchro", "xyz", "link"].includes(cardFrameType)) {
               // Maximum 3 copies per card per deck and maximum 15 cards per extra deck
               if (
-                extraDeck.reduce(
+                extraDeck.cards.reduce(
                   (total, card) =>
                     card.name == event.target.id ? total + 1 : total,
                   0,
                 ) < 3 &&
-                extraDeck.length < 15
+                extraDeck.cards.length < 15
               ) {
-                extraDeck.push(card);
+                extraDeck.cards.push(card);
+                extraDeck[cardType].push(card);
                 addCard(
                   cards.find((card) => card.name == event.target.id),
                   "extra-deck",
@@ -131,14 +157,16 @@
             } else {
               // Maximum 3 copies per card per deck and maximum 60 cards per main deck
               if (
-                mainDeck.reduce(
+                mainDeck.cards.reduce(
                   (total, card) =>
                     card.name == event.target.id ? total + 1 : total,
                   0,
                 ) < 3 &&
-                mainDeck.length < 60
+                mainDeck.cards.length < 60
               ) {
-                mainDeck.push(card);
+                mainDeck.cards.push(card);
+                console.log(cardType);
+                mainDeck[cardType].push(card);
                 addCard(
                   cards.find((card) => card.name == event.target.id),
                   "main-deck",
@@ -151,14 +179,20 @@
         // On click, remove from main deck
         if (section == "main-deck") {
           template.querySelector("img").addEventListener("click", (event) => {
-            mainDeck.splice(
-              mainDeck.findIndex((card) => card.name == event.target.id),
+            mainDeck.cards.splice(
+              mainDeck.cards.findIndex((card) => card.name == event.target.id),
+              1,
+            );
+            mainDeck[cardType].splice(
+              mainDeck[cardType].findIndex(
+                (card) => card.name == event.target.id,
+              ),
               1,
             );
 
             removeCards("main-deck");
 
-            mainDeck.forEach((card) => {
+            mainDeck.cards.forEach((card) => {
               addCard(card, "main-deck");
             });
           });
@@ -167,14 +201,20 @@
         // On click, remove from extra deck
         if (section == "extra-deck") {
           template.querySelector("img").addEventListener("click", (event) => {
-            extraDeck.splice(
-              extraDeck.findIndex((card) => card.name == event.target.id),
+            extraDeck.cards.splice(
+              extraDeck.cards.findIndex((card) => card.name == event.target.id),
+              1,
+            );
+            extraDeck[cardType].splice(
+              extraDeck[cardType].findIndex(
+                (card) => card.name == event.target.id,
+              ),
               1,
             );
 
             removeCards("extra-deck");
 
-            extraDeck.forEach((card) => {
+            extraDeck.cards.forEach((card) => {
               addCard(card, "extra-deck");
             });
           });
@@ -188,39 +228,19 @@
       }
 
       document.getElementById("sort").addEventListener("click", () => {
-        // Main deck
-        const normalMonsters = [];
-        const effectMonsters = [];
-        const ritualMonsters = [];
-        const normalSpells = [];
-        const quickPlaySpells = [];
-        const continuousSpells = [];
-        const ritualSpells = [];
-        const equipSpells = [];
-        const fieldSpells = [];
-        const normalTraps = [];
-        const continuousTraps = [];
-        const counterTraps = [];
-
-        // Extra deck
-        const fusionMonsters = [];
-        const synchroMonsters = [];
-        const xyzMonsters = [];
-        const linkMonsters = [];
-
-        mainDeck.sort((a, b) => a.name.localeCompare(b.name));
-        extraDeck.sort((a, b) => a.name.localeCompare(b.name));
+        mainDeck.cards.sort((a, b) => a.name.localeCompare(b.name));
+        extraDeck.cards.sort((a, b) => a.name.localeCompare(b.name));
 
         removeCards("main-deck");
         removeCards("extra-deck");
 
-        mainDeck.forEach((card) => addCard(card, "main-deck"));
-        extraDeck.forEach((card) => addCard(card, "extra-deck"));
+        mainDeck.cards.forEach((card) => addCard(card, "main-deck"));
+        extraDeck.cards.forEach((card) => addCard(card, "extra-deck"));
       });
 
       document.getElementById("clear").addEventListener("click", () => {
-        mainDeck.length = 0;
-        extraDeck.length = 0;
+        mainDeck.cards.length = 0;
+        extraDeck.cards.length = 0;
 
         removeCards("main-deck");
         removeCards("extra-deck");
