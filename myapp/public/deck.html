@@ -214,8 +214,10 @@
         "Bottom-Right": "↘",
       };
 
-      document.getElementById("main-deck-count").innerText = "Main Deck: " + mainDeck.cards.length;
-      document.getElementById("extra-deck-count").innerText = "Extra Deck: " + extraDeck.cards.length;
+      document.getElementById("main-deck-count").innerText =
+        "Main Deck: " + mainDeck.cards.length;
+      document.getElementById("extra-deck-count").innerText =
+        "Extra Deck: " + extraDeck.cards.length;
 
       function addCard(card, section) {
         const template = document
@@ -373,16 +375,20 @@
           });
         }
 
-        document.getElementById("main-deck-count").innerText = "Main Deck: " + mainDeck.cards.length;
-        document.getElementById("extra-deck-count").innerText = "Extra Deck: " +   extraDeck.cards.length;
+        document.getElementById("main-deck-count").innerText =
+          "Main Deck: " + mainDeck.cards.length;
+        document.getElementById("extra-deck-count").innerText =
+          "Extra Deck: " + extraDeck.cards.length;
 
         document.querySelector(`#${section}`).appendChild(template);
       }
 
       function removeCards(section) {
         document.querySelector(`#${section}`).replaceChildren("");
-        document.getElementById("main-deck-count").innerText = "Main Deck: " + mainDeck.cards.length;
-        document.getElementById("extra-deck-count").innerText = "Extra Deck: " +   extraDeck.cards.length;
+        document.getElementById("main-deck-count").innerText =
+          "Main Deck: " + mainDeck.cards.length;
+        document.getElementById("extra-deck-count").innerText =
+          "Extra Deck: " + extraDeck.cards.length;
       }
 
       // Sort deck
@@ -423,8 +429,10 @@
         extraDeck.cards.length = 0;
         for (const cardType in extraDeck) extraDeck[cardType].length = 0;
 
-        document.getElementById("main-deck-count").innerText = "Main Deck: " + mainDeck.cards.length;
-        document.getElementById("extra-deck-count").innerText = "Extra Deck: " +   extraDeck.cards.length;
+        document.getElementById("main-deck-count").innerText =
+          "Main Deck: " + mainDeck.cards.length;
+        document.getElementById("extra-deck-count").innerText =
+          "Extra Deck: " + extraDeck.cards.length;
 
         removeCards("main-deck");
         removeCards("extra-deck");
@@ -433,35 +441,43 @@
       // Filter by card name and card description based on current search input
       const filterBySearch = document.getElementById("search");
       filterBySearch.addEventListener("input", () => {
-        const filteredByName = cards.filter((card) =>
-          card.name.toLowerCase().includes(filterBySearch.value.toLowerCase()),
-        );
+        if (filterBySearch.value.length > 2) {
+          const filteredByName = cards.filter((card) =>
+            card.name
+              .toLowerCase()
+              .includes(filterBySearch.value.toLowerCase()),
+          );
 
-        const filteredByDescription = cards.filter((card) =>
-          card.desc.toLowerCase().includes(filterBySearch.value.toLowerCase()),
-        );
+          const filteredByDescription = cards.filter((card) =>
+            card.desc
+              .toLowerCase()
+              .includes(filterBySearch.value.toLowerCase()),
+          );
 
-        const filteredResults = Array.from(
-          new Set([...filteredByName, ...filteredByDescription]),
-        );
+          const filteredResults = Array.from(
+            new Set([...filteredByName, ...filteredByDescription]),
+          );
 
-        for (const cardType in filteredCards)
-          filteredCards[cardType].length = 0;
-        filteredResults.forEach((card) => {
-          const cardFrameType = card.frameType;
-          const cardType =
-            card.humanReadableCardType.charAt(0).toLowerCase() +
-            card.humanReadableCardType.split(/[ -]/).join("").slice(1) +
-            "Cards";
+          for (const cardType in filteredCards)
+            filteredCards[cardType].length = 0;
+          filteredResults.forEach((card) => {
+            const cardFrameType = card.frameType;
+            const cardType =
+              card.humanReadableCardType.charAt(0).toLowerCase() +
+              card.humanReadableCardType.split(/[ -]/).join("").slice(1) +
+              "Cards";
 
-          // Ignore card types that were not pre-declared in mainDeck, extraDeck and filteredCards
-          if (filteredCards[cardType]) filteredCards[cardType].push(card);
-        });
+            // Ignore card types that were not pre-declared in mainDeck, extraDeck and filteredCards
+            if (filteredCards[cardType]) filteredCards[cardType].push(card);
+          });
 
-        removeCards("card-list");
+          removeCards("card-list");
 
-        for (const cardType in filteredCards) {
-          filteredCards[cardType].forEach((card) => addCard(card, "card-list"));
+          for (const cardType in filteredCards) {
+            filteredCards[cardType].forEach((card) =>
+              addCard(card, "card-list"),
+            );
+          }
         }
       });
     </script>
