@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import { get, set } from "idb-keyval";
+import type { Card } from "./types";
 
 async function loadCards() {
   const [{ database_version }] = await fetch(
@@ -20,7 +21,7 @@ async function loadCards() {
 }
 
 function App() {
-  const [cards, setCards] = useState<[]>([]);
+  const [cards, setCards] = useState<Card[]>([]);
 
   useEffect(() => {
     loadCards().then(setCards);
