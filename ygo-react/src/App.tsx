@@ -9,14 +9,14 @@ import SearchList from "./SearchList";
 async function loadCards() {
   const [{ database_version }] = await fetch(
     "https://db.ygoprodeck.com/api/v7/checkDBVer.php",
-  ).then((response) => response.json());
+  ).then((r) => r.json());
 
   const cached = await get("cards");
   if (cached?.version === database_version) return cached.data;
 
   const data = (
     await fetch("https://db.ygoprodeck.com/api/v7/cardinfo.php").then(
-      (response) => response.json(),
+      (r) => r.json(),
     )
   ).data;
   await set("cards", { version: database_version, data });
