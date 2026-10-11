@@ -31,9 +31,6 @@ function App() {
     loadCards().then(setCards);
   }, []);
 
-  console.log(cards.length);
-  console.log(query);
-
   const results = cards.filter((card) =>
     card.name.toLowerCase().includes(query.toLowerCase()),
   );
