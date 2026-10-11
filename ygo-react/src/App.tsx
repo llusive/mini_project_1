@@ -3,6 +3,8 @@ import "./App.css";
 import { get, set } from "idb-keyval";
 import type { Card } from "./types";
 
+import SearchBar from "./SearchBar";
+
 async function loadCards() {
   const [{ database_version }] = await fetch(
     "https://db.ygoprodeck.com/api/v7/checkDBVer.php",
@@ -22,14 +24,20 @@ async function loadCards() {
 
 function App() {
   const [cards, setCards] = useState<Card[]>([]);
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     loadCards().then(setCards);
   }, []);
 
   console.log(cards.length);
+  console.log(query);
 
-  return <></>;
+  return (
+  <>
+    <SearchBar query={query} onQueryChange={setQuery} />
+  </>
+);
 }
 
 export default App;
