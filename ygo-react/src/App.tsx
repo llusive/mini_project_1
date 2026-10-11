@@ -4,6 +4,7 @@ import { get, set } from "idb-keyval";
 import type { Card } from "./types";
 
 import SearchBar from "./SearchBar";
+import SearchList from "./SearchList";
 
 async function loadCards() {
   const [{ database_version }] = await fetch(
@@ -33,11 +34,16 @@ function App() {
   console.log(cards.length);
   console.log(query);
 
+  const results = cards.filter((card) =>
+    card.name.toLowerCase().includes(query.toLowerCase()),
+  );
+
   return (
-  <>
-    <SearchBar query={query} onQueryChange={setQuery} />
-  </>
-);
+    <>
+      <SearchBar query={query} onQueryChange={setQuery} />
+      <SearchList results={results} />
+    </>
+  );
 }
 
 export default App;
