@@ -31,8 +31,8 @@ function App() {
     loadCards().then(setCards);
   }, []);
 
-  const results = cards.filter((card) =>
-    card.name.toLowerCase().includes(query.toLowerCase()),
+  const results = cards.filter((c) =>
+    c.name.toLowerCase().includes(query.toLowerCase()),
   );
 
   return (
