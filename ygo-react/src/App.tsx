@@ -26,7 +26,7 @@ async function loadCards() {
 function App() {
   const [cards, setCards] = useState<Card[]>([]);
   const [query, setQuery] = useState("");
-  const [numResults, setNumResults] = useState(100);
+  const [visibleCount, setVisibleCount] = useState(100);
 
   useEffect(() => {
     loadCards().then(setCards);
@@ -35,16 +35,16 @@ function App() {
   const matches = cards.filter((c) =>
     c.name.toLowerCase().includes(query.toLowerCase()),
   );
-  const results = matches.slice(0, numResults);
-  const hasMore = numResults < matches.length;
+  const results = matches.slice(0, visibleCount);
+  const hasMore = visibleCount < matches.length;
 
   function handleQueryChange(value: string) {
     setQuery(value);
-    setNumResults(100);
+    setVisibleCount(100);
   }
 
   function handleShowMore() {
-    setNumResults((prev) => prev + 100);
+    setVisibleCount((prev) => prev + 100);
   }
 
   return (
